@@ -8,7 +8,7 @@ tags:
 description: "梦结束的地方"
 sidebar: false
 aside: true
-cover: /helloworld/cover.jpg
+cover: /helloworld/cover.webp
 ---
 
 
@@ -28,4 +28,4 @@ cloudfare+hostinger+wordpress,一个零技术力搭建的网站，建站过程�
 
 这是《凉宫春日的忧郁》中的独白。世界上的人太多，自己视角中的新奇之物或许在整个天地中显得淡然无色。然而，凉宫春日忧郁的来源却并非评价世界本身的无趣，因为，评价，划分着这个世界的不正是我们自己吗？即便是在做着同样的事，每个人的感受，心理，思考也是独一无二，所谓日常便是属于每个人的日常。因此，境由心造，事在人为，即便未来迷茫，时间却始终在我们手中。
 
-![](/helloworld/1background.jpg)
+![](/helloworld/1background.webp)

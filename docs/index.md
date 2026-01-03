@@ -78,8 +78,8 @@ editLink: false
 */
 
 :root {
-  --my-avatar-url: url('/logo.png');
-  --my-bg-image-url: url('/background.jpg');
+  --my-avatar-url: url('/logo.webp');
+  --my-bg-image-url: url('/background.webp');
   --my-bg-opacity: 0.3;
   
   /* [新增接口] 首页内容整体向右移动的距离 */
