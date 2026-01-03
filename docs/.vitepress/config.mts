@@ -21,7 +21,8 @@ export default defineConfig({
   
   description: '',
   
-  // lastUpdated: true,
+  lastUpdated: true,
+  returnToTopLabel:true,
   // 详见：https://vitepress.dev/zh/reference/site-config#head
   head: [
     // 配置网站的图标（显示在浏览器的 tab 上）
@@ -35,6 +36,17 @@ export default defineConfig({
       level: [ 2, 3],
       label: '  Outline'
     },
+    blog:{
+
+    },
+    lastUpdated: {
+      text: '最后更新于',
+      formatOptions: {
+        dateStyle: 'short', // 显示为 2026/1/4
+        timeStyle: 'short'  // 显示为 12:00
+      }
+    },
+
     // 默认文案修改
     returnToTopLabel: '回到顶部',
     sidebarMenuLabel: '相关文章',

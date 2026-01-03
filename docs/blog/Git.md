@@ -1,19 +1,15 @@
 ---
-title: "Git"
+title: Git
+description: 'Git人门'
 date: 2026-01-02
 categories: 
   - "notes"
-description: 'Git人门'
 tags: 
   - "Git"
-
 sidebar: false
 aside: true
-
-
-
-
 ---
+
 笔记对应MIT-The Missing Semester of Your CS Education的第六讲[Version Control (Git)](https://missing.csail.mit.edu/2026/version-control/)
 
 [官方笔记文档](https://missing.csail.mit.edu/2020/version-control/)
@@ -253,6 +249,8 @@ vim .gitignore
 *.o
 ```
 <br>
+
+
 :::tip 总结
 git的玩法非常广泛，尝试图形化界面，shell集成，以及插件，社区……
 甚至自己实现一个git
