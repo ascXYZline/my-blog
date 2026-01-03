@@ -1,20 +1,22 @@
 ---
-
 title: "Hello, World!"
 date: 2025-10-04
 categories: 
   - "blog"
-description: '梦开始的地方'
 tags: 
   - "碎碎念"
-
+description: "梦结束的地方"
 sidebar: false
 aside: true
-
 cover: /helloworld/cover.jpg
 ---
-![](/helloworld/cover.jpg)
-##   Hello,World!
+
+
+#   Hello,World!
+
+--- 
+
+
 经过一番折腾，这个网站终于迟到地出现在了互联网的角落。  
 cloudfare+hostinger+wordpress,一个零技术力搭建的网站，建站过程总觉得这个要学，那个要学，最终选择了什么都不学的方式，甚至连网站的用途也是未知数。
 :::info 
