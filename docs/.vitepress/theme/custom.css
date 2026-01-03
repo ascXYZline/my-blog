@@ -1,0 +1,176 @@
+/* ============================================================
+   VitePress & Sugar 主题 - 终极定制版
+   ============================================================ */
+
+:root {
+  /* --- 1. 字体配置 */
+ 
+
+  /* --- 2. 排版配置 --- */
+  --my-doc-font-size: 17px;       /* 正文字号 */
+  --my-doc-line-height: 1.8;      /* 正文行高 */
+  --my-content-max-width: 1500px;  /* 文章宽度 */
+
+  /* --- 3. 背景颜色配置 --- */
+  --my-bg-light: #ffffff;
+  --my-bg-dark: #3a3b3ab7;
+}
+
+
+
+body {
+  
+  background-color: var(--vp-c-bg) !important;
+  /* 如果你想用背景图，取消下面这行的注释: */
+  /* background: url('./assets/bg.webp') center/cover fixed no-repeat; */
+}             
+
+/* 颜色变量映射 */
+
+:root { --vp-c-bg: var(--my-bg-light); }
+.dark { --vp-c-bg: var(--my-bg-dark); }
+
+
+
+/* ------------------- 2. 图片终极修复 (重点) ------------------- */
+/* 针对文章内的所有图片 */
+.vp-doc img {
+  /* 强制宽度 100%，铺满容器 */
+  width: 100% !important;
+  min-width: 100% !important;
+  
+  /* 核心：高度自动，且解除所有比例锁定 */
+  height: auto !important;
+  max-height: none !important;
+  aspect-ratio: unset !important; /* 关键：防止浏览器锁定原始比例 */
+  
+  /* 样式重置，防止蒙版或裁剪 */
+  object-fit: unset !important; 
+  
+  /* 布局与美化 */
+  display: block !important;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+
+/* ------------------- 4. 正文排版细节 ------------------- */
+:root {
+  font-family: var(--vp-font-family-base);
+}
+
+/* 统一正文、列表的字号和行距 */
+.vp-doc p, 
+.vp-doc li, 
+.vp-doc ul, 
+.vp-doc ol {
+  font-size: var(--my-doc-font-size);
+  line-height: var(--my-doc-line-height);
+  text-align: justify; /* 两端对齐，看起来更整齐 */
+  letter-spacing: 0.02em; /* 字间距稍微宽松一点点 */
+}
+
+/* 标题间距优化 */
+.vp-doc h2 { margin-top: 2.5em; margin-bottom: 1em; border-bottom: none; }
+.vp-doc h3 { margin-top: 2em; margin-bottom: 0.8em; }
+
+/* ============================================================
+   自定义容器样式修正 (让 ::: info 变成纯净灰色块)
+   ============================================================ */
+
+/* 1. 隐藏标题文字 (INFO) */
+.vp-doc .custom-block.info .custom-block-title {
+    display: none !important;
+}
+
+/* 2. 隐藏左上角的图标 (那个 'i' 符号) */
+/* 如果你想保留图标，只去掉文字，请删除这一段 */
+.vp-doc .custom-block.info::before {
+    display: none !important;
+}
+
+/* 3. 调整间距 */
+/* 因为去掉了标题，原本的内边距会显得上面很挤，或者左边留白太多 */
+.vp-doc .custom-block.info {
+    /* 修正文字缩进，不再给图标留位置 */
+    padding: 16px 16px !important; 
+    
+    /* 确保背景色是你想要的灰色 (可选，防止主题默认是淡蓝色) */
+    background-color: #f6f6f7 !important; 
+    border-color: #e2e2e3 !important; /* 边框颜色 */
+    color: inherit !important; /* 文字颜色跟随正文 */
+}
+
+/* 暗色模式下的适配 */
+.dark .vp-doc .custom-block.info {
+    background-color: #202127 !important;
+    border-color: #3c3c43 !important;
+}
+
+/* ============================================================
+   5. 布局终极稳固版 (基于暴力拆解版 + 变量微调)
+   ============================================================ */
+
+/* 🎛️ 你的控制台 - 请在这里调整数值 */
+:root {
+  /* 整个容器的总宽度 (包含正文+右侧栏) */
+  /* 建议值: 1200px ~ 1600px */
+  --my-layout-max-width: 1100px;
+
+  /* 右侧目录栏的宽度 */
+  /* 建议值: 240px ~ 300px */
+  --my-aside-width: 150px;
+
+  /* 核心修复：正文文字内容的限制宽度 */
+  /* 设为 100% 就是之前的“太宽了”效果 */
+  /* 建议设为 900px ~ 1100px，既宽敞又不会读着累 */
+  --my-text-width: 950px; 
+}
+
+
+/* --- 核心逻辑 (请勿修改，除非你知道自己在做什么) --- */
+
+@media (min-width: 960px) {
+  
+  /* 1. 最外层容器：必须撑开！ */
+  /* 针对 sidebar: false 的页面 */
+  .VPDoc:not(.has-sidebar) .container {
+      max-width: var(--my-layout-max-width) !important;
+      display: flex !important;
+      justify-content: center !important;
+      margin: 0 auto !important;
+  }
+
+  /* 2. 正文外壳：解除所有锁，让它填满剩余空间 */
+  .VPDoc:not(.has-sidebar) .content {
+      max-width: none !important; /* 暴力拆锁 */
+      width: auto !important;
+      flex-grow: 1 !important;    /* 霸占剩余空间 */
+      min-width: 0 !important;
+      padding: 0 2rem 0 0 !important; /* 给右边留点缝隙 */
+  }
+
+  /* 3. 正文内胆 (关键点)：在这里进行微调限制 */
+  /* 之前失效就是因为没控制好这一层 */
+  .VPDoc:not(.has-sidebar) .content-container {
+      max-width: var(--my-text-width) !important; 
+      margin-left: 0 !important;  /* 靠左对齐，或者改为 auto 居中 */
+      margin-right: auto !important;
+  }
+
+  /* 4. 右侧目录：雷打不动 */
+  .VPDoc:not(.has-sidebar) .aside {
+      display: block !important;
+      width: var(--my-aside-width) !important;
+      flex-shrink: 0 !important; /* 禁止被压缩 */
+      flex-grow: 0 !important;
+  }
+}
+
+/* 移动端保护：手机上不要强制生效，保持默认 */
+@media (max-width: 959px) {
+  .VPDoc:not(.has-sidebar) .container {
+    max-width: 100% !important;
+  }
+}
