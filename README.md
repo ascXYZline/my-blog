@@ -1,14 +1,13 @@
-<h1 align="center"> VitePress @sugarat/theme </h1>
+<h1 align="center"> Vitepress powered by theme
 
-<p align="center">
-简约风的 <a href="https://theme.sugarat.top"  target="_blank"target="_blank">VitePress 博客主题</a> 示例运行项目。
-</p>
 
-<p align="center">
-    <a href="https://atqq.github.io/vitepress-blog-sugar-template/" target="_blank">GitHub Pages Demo</a>
-</p>
 
 ## Usage
+
+
+注意：以下仅仅使用sugarat theme的配置，即本站的配置
+
+
 
 先安装 `pnpm`
 
