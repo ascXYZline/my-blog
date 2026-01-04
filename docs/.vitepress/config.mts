@@ -22,13 +22,13 @@ export default defineConfig({
   description: '',
   
   lastUpdated: true,
-  returnToTopLabel:true,
+  
   // 详见：https://vitepress.dev/zh/reference/site-config#head
   head: [
     // 配置网站的图标（显示在浏览器的 tab 上）
     // ['link', { rel: 'icon', href: `${base}favicon.ico` }], // 修改了 base 这里也需要同步修改
     
-    ['link', { rel: 'icon', href: '/logo.png' }]
+    ['link', { rel: 'icon', href: '/logo.webp' }]
   ],
   themeConfig: {
     // 展示 2,3 级标题在目录中
@@ -36,9 +36,7 @@ export default defineConfig({
       level: [ 2, 3],
       label: '  Outline'
     },
-    blog:{
-
-    },
+    
     lastUpdated: {
       text: '最后更新于',
       formatOptions: {
@@ -53,7 +51,7 @@ export default defineConfig({
     lastUpdatedText: '上次更新于',
 
     // 设置logo
-    logo: '/logo.png',
+    logo: '/logo.webp',
     // editLink: {
     //   pattern:
     //     'https://github.com/ATQQ/sugar-blog/tree/master/packages/blogpress/:path',
