@@ -52,7 +52,7 @@ export default defineConfig({
     lastUpdatedText: '上次更新于',
 
     // 设置logo
-    logo: '/logo.png',
+    logo: '/logo.webp',
 
 
     // editLink: {
