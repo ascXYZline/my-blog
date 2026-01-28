@@ -63,7 +63,7 @@ export default defineConfig({
     nav: [
       { text: '主页',link: '/'},
       { text: '博客', link: '/blog' },
-      
+      { text: '时间线',link:'/timeline'}
      //关于作者页面 { text: '关于作者', link: 'https://sugarat.top/aboutme.html' }
     ],
 /*   社交链接
