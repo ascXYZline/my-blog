@@ -6,43 +6,45 @@ export default {
   // 监听 moments.md 的变化
   watch: ['./_data/moments.md'],
 
-  async load() {
+    async load() {
     // ----------------------
-    // 1. 获取所有博客文章
+    // 1. 处理文章 (Posts)
     // ----------------------
-    // '**/*.md' 表示扫描 docs 下所有 markdown
     const postsLoader = createContentLoader('**/*.md', {
-      excerpt: true, // 提取摘要
+      excerpt: true,
       transform(rawData) {
-        // 过滤掉不需要的文章（比如首页、碎碎念页自己、隐藏的文章）
         return rawData.filter((page) => {
           return (
-            page.url !== '/' &&             // 排除首页
-            page.url !== '/timeline' &&        // 排除时间线页面自己
-            page.frontmatter.article !== false && // 排除标记为非文章的
+            page.url !== '/' &&
+            page.url !== '/timeline' &&
+            page.frontmatter.article !== false &&
             page.frontmatter.publish !== false
           )
-        }).sort((a, b) => {
-          return +new Date(b.frontmatter.date) - +new Date(a.frontmatter.date)
         })
       }
     })
     
     const posts = await postsLoader.load()
     
-    // 格式化文章数据，标记 type 为 'post'
-    const formattedPosts = posts.map(post => ({
-      type: 'post',
-      date: formatDate(post.frontmatter.date), // 统一日期格式
-      title: post.frontmatter.title || post.url,
-      link: post.url,
-      tags: post.frontmatter.tags || [],
-      // 如果没有摘要，就不用
-      excerpt: post.frontmatter.description || post.frontmatter.summary || post.excerpt 
-    }))
+    const formattedPosts = posts.map(post => {
+      // 1. 获取原始日期对象
+      const dateObj = new Date(post.frontmatter.date); 
+      // 2. 检查日期是否有效，无效则给一个极小值，保证沉底，防止 NaN 破坏排序
+      const timestamp = isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
+
+      return {
+        type: 'post',
+        timestamp: timestamp, // <--- 核心：保留数字用于排序
+        date: formatDate(dateObj), // 仅用于展示
+        title: post.frontmatter.title || post.url,
+        link: post.url,
+        tags: post.frontmatter.tags || [],
+        excerpt: post.frontmatter.description || post.frontmatter.summary || post.excerpt 
+      }
+    })
 
     // ----------------------
-    // 2. 获取碎碎念 (Moments)
+    // 2. 处理碎碎念 (Moments)
     // ----------------------
     const filePath = path.resolve(__dirname, './_data/moments.md')
     const content = fs.readFileSync(filePath, 'utf-8')
@@ -55,9 +57,13 @@ export default {
       const dateStr = lines[0].trim()
       const rawBody = lines.slice(1).join('\n').trim()
       
+      const dateObj = new Date(dateStr);
+      const timestamp = isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
+
       return {
-        type: 'moment', // 标记 type 为 'moment'
-        date: formatDate(dateStr),
+        type: 'moment',
+        timestamp: timestamp, // <--- 核心：保留数字用于排序
+        date: formatDate(dateObj),
         content: md.render(rawBody)
       }
     })
@@ -67,8 +73,8 @@ export default {
     // ----------------------
     const combined = [...formattedPosts, ...formattedMoments]
     
-    // 按日期倒序排列
-    return combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    // 直接比较数字，极快且不会出错
+    return combined.sort((a, b) => b.timestamp - a.timestamp)
   }
 }
 
