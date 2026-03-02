@@ -6,7 +6,7 @@ export default {
   // 监听 moments.md 的变化
   watch: ['./_data/moments.md'],
 
-    async load() {
+  async load() {
     // ----------------------
     // 1. 处理文章 (Posts)
     // ----------------------
@@ -16,7 +16,8 @@ export default {
         return rawData.filter((page) => {
           return (
             page.url !== '/' &&
-            page.url !== '/timeline' &&
+            page.url !== '/timeline' && // 确保排除你的时间线页面本身
+            page.url !== '/essay' &&    // 如果你的时间线页面叫 essay 也排除
             page.frontmatter.article !== false &&
             page.frontmatter.publish !== false
           )
@@ -27,15 +28,15 @@ export default {
     const posts = await postsLoader.load()
     
     const formattedPosts = posts.map(post => {
-      // 1. 获取原始日期对象
+      // 获取日期对象
       const dateObj = new Date(post.frontmatter.date); 
-      // 2. 检查日期是否有效，无效则给一个极小值，保证沉底，防止 NaN 破坏排序
+      // 检查日期是否有效
       const timestamp = isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
 
       return {
         type: 'post',
-        timestamp: timestamp, // <--- 核心：保留数字用于排序
-        date: formatDate(dateObj), // 仅用于展示
+        timestamp: timestamp, // 用于排序
+        date: formatDate(dateObj), // 用于展示 (修复了时区)
         title: post.frontmatter.title || post.url,
         link: post.url,
         tags: post.frontmatter.tags || [],
@@ -62,8 +63,8 @@ export default {
 
       return {
         type: 'moment',
-        timestamp: timestamp, // <--- 核心：保留数字用于排序
-        date: formatDate(dateObj),
+        timestamp: timestamp, // 用于排序
+        date: formatDate(dateObj), // 用于展示 (修复了时区)
         content: md.render(rawBody)
       }
     })
@@ -73,16 +74,24 @@ export default {
     // ----------------------
     const combined = [...formattedPosts, ...formattedMoments]
     
-    // 直接比较数字，极快且不会出错
+    // 按时间戳倒序
     return combined.sort((a, b) => b.timestamp - a.timestamp)
   }
 }
 
-// 辅助函数：统一日期格式 YYYY-MM-DD HH:mm
+// ==========================================
+// 重点修复了这里：不再使用 toISOString
+// ==========================================
 function formatDate(date: string | Date) {
   const d = new Date(date)
-  if(isNaN(d.getTime())) return date // 如果解析失败直接返回原字符串
-  
-  // 简单格式化，你可以根据需要调整
-  return d.toISOString().replace('T', ' ').substring(0, 16)
+  if (isNaN(d.getTime())) return date
+
+  // 手动拼接本地时间，保证“所见即所得”，不会被减去8小时
+  const year = d.getFullYear()
+  const month = (d.getMonth() + 1).toString().padStart(2, '0')
+  const day = d.getDate().toString().padStart(2, '0')
+  const hour = d.getHours().toString().padStart(2, '0')
+  const minute = d.getMinutes().toString().padStart(2, '0')
+
+  return `${year}-${month}-${day} ${hour}:${minute}`
 }
