@@ -1,97 +1,122 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { createMarkdownRenderer, createContentLoader } from 'vitepress'
+import { createContentLoader } from 'vitepress'
+import MarkdownIt from 'markdown-it'
 
+/* ── markdown-it 实例（直接可靠，无需依赖 VitePress 内部状态） ── */
+const md = new MarkdownIt({
+  html: true,
+  breaks: true,     // 单换行 → <br>，适合碎碎念的随意书写
+  linkify: true,    // 自动识别 URL
+})
+
+/* ── 类型定义 & 导出 ── */
+export interface TimelineItem {
+  type: 'post' | 'note'
+  timestamp: number
+  date: string       // 展示用短日期 "MM-DD HH:mm"
+  year: number        // 年份分组用
+  title?: string
+  link?: string
+  tags?: string[]
+  excerpt?: string    // post 摘要（纯文本 / 行内 HTML）
+  content?: string    // note 正文（块级 HTML）
+}
+
+declare const data: TimelineItem[]
+export { data }
+
+/* ── 主加载器 ── */
 export default {
-  // 监听 moments.md 的变化
   watch: ['./_data/moments.md'],
 
-  async load() {
-    // ----------------------
-    // 1. 处理文章 (Posts)
-    // ----------------------
+  async load(): Promise<TimelineItem[]> {
+
+    // ━━━━━━━━ 1. 文章 (Posts) ━━━━━━━━
     const postsLoader = createContentLoader('**/*.md', {
       excerpt: true,
       transform(rawData) {
-        return rawData.filter((page) => {
-          return (
-            page.url !== '/' &&
-            page.url !== '/timeline' && // 确保排除你的时间线页面本身
-            page.url !== '/essay' &&    // 如果你的时间线页面叫 essay 也排除
-            page.frontmatter.article !== false &&
-            page.frontmatter.publish !== false
-          )
-        })
-      }
+        return rawData.filter(page =>
+          page.url !== '/'
+          && page.url !== '/timeline'
+          && page.url !== '/essay'
+          && page.frontmatter.article !== false
+          && page.frontmatter.publish !== false
+        )
+      },
     })
-    
+
     const posts = await postsLoader.load()
-    
-    const formattedPosts = posts.map(post => {
-      // 获取日期对象
-      const dateObj = new Date(post.frontmatter.date); 
-      // 检查日期是否有效
-      const timestamp = isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
+
+    const postItems: TimelineItem[] = posts.map(post => {
+      const d = safeDate(post.frontmatter.date)
+
+      // 摘要优先级：frontmatter 手写 > 自动提取（去 HTML 后截断）
+      const rawExcerpt =
+        post.frontmatter.description
+        || post.frontmatter.summary
+        || stripHtml(post.excerpt ?? '').slice(0, 120)
 
       return {
         type: 'post',
-        timestamp: timestamp, // 用于排序
-        date: formatDate(dateObj), // 用于展示 (修复了时区)
+        timestamp: d.getTime(),
+        date: fmtShort(d),
+        year: d.getFullYear(),
         title: post.frontmatter.title || post.url,
         link: post.url,
         tags: post.frontmatter.tags || [],
-        excerpt: post.frontmatter.description || post.frontmatter.summary || post.excerpt 
+        excerpt: rawExcerpt || '',
       }
     })
 
-    // ----------------------
-    // 2. 处理碎碎念 (Moments)
-    // ----------------------
-    const filePath = path.resolve(__dirname, './_data/moments.md')
-    const content = fs.readFileSync(filePath, 'utf-8')
-    const config = global.VITEPRESS_CONFIG
-    const md = await createMarkdownRenderer(config?.srcDir || process.cwd(), config?.markdown, config?.site?.base, config?.logger)
+    // ━━━━━━━━ 2. 碎碎念 (Notes) ━━━━━━━━
+    const momentsPath = path.resolve(__dirname, './_data/moments.md')
+    const raw = fs.readFileSync(momentsPath, 'utf-8')
 
-    const rawMoments = content.split(/^## /m).slice(1)
-    const formattedMoments = rawMoments.map(item => {
-      const lines = item.split('\n')
-      const dateStr = lines[0].trim()
-      const rawBody = lines.slice(1).join('\n').trim()
-      
-      const dateObj = new Date(dateStr);
-      const timestamp = isNaN(dateObj.getTime()) ? 0 : dateObj.getTime();
+    const noteItems: TimelineItem[] = raw
+      .split(/^## /m)          // 按 ## 日期 分割
+      .slice(1)                // 丢弃第一段空白
+      .map(block => {
+        const [dateLine, ...bodyLines] = block.split('\n')
+        const d = safeDate(dateLine.trim())
+        const body = bodyLines.join('\n').trim()
 
-      return {
-        type: 'moment',
-        timestamp: timestamp, // 用于排序
-        date: formatDate(dateObj), // 用于展示 (修复了时区)
-        content: md.render(rawBody)
-      }
-    })
+        return {
+          type: 'note',
+          timestamp: d.getTime(),
+          date: fmtShort(d),
+          year: d.getFullYear(),
+          // ★ 核心修复：用 md.render() 将 markdown 正确转为 HTML
+          // "- item" → <ul><li>item</li></ul>  ✓
+          // "**bold**" → <strong>bold</strong>  ✓
+          content: md.render(body),
+        }
+      })
 
-    // ----------------------
-    // 3. 合并并排序
-    // ----------------------
-    const combined = [...formattedPosts, ...formattedMoments]
-    
-    // 按时间戳倒序
-    return combined.sort((a, b) => b.timestamp - a.timestamp)
-  }
+    // ━━━━━━━━ 3. 合并 & 按时间倒序 ━━━━━━━━
+    return [...postItems, ...noteItems]
+      .sort((a, b) => b.timestamp - a.timestamp)
+  },
 }
 
-// ==========================================
-// 重点修复了这里：不再使用 toISOString
-// ==========================================
-function formatDate(date: string | Date) {
-  const d = new Date(date)
-  if (isNaN(d.getTime())) return date
+/* ── 工具函数 ── */
 
-  // 手动拼接本地时间，保证“所见即所得”，不会被减去8小时
-  const year = d.getFullYear()
-  const month = (d.getMonth() + 1).toString().padStart(2, '0')
-  const day = d.getDate().toString().padStart(2, '0')
-  const hour = d.getHours().toString().padStart(2, '0')
-  const minute = d.getMinutes().toString().padStart(2, '0')
+function safeDate(v: unknown): Date {
+  const d = new Date(v as string)
+  return isNaN(d.getTime()) ? new Date(0) : d
+}
 
-  return `${year}-${month}-${day} ${hour}:${minute}`
+/** 短格式日期：MM-DD HH:mm（年份由组件中的 year header 提供） */
+function fmtShort(d: Date): string {
+  if (d.getTime() === 0) return ''
+  const M = String(d.getMonth() + 1).padStart(2, '0')
+  const D = String(d.getDate()).padStart(2, '0')
+  const h = String(d.getHours()).padStart(2, '0')
+  const m = String(d.getMinutes()).padStart(2, '0')
+  return `${M}-${D} ${h}:${m}`
+}
+
+/** 去除 HTML 标签 */
+function stripHtml(s: string): string {
+  return s.replace(/<[^>]*>/g, '').trim()
 }
