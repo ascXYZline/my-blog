@@ -322,4 +322,70 @@ function isNewYear(index: number): boolean {
 
   .tl-card-more { opacity: 1; }
 }
+
+/* ===================== Callout 容器样式 ===================== */
+.tl-prose :deep(.callout) {
+  margin: 0.5em 0;
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-divider);
+  overflow: hidden;
+  font-size: 0.88rem;
+}
+
+.tl-prose :deep(.callout-title) {
+  padding: 6px 12px;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.tl-prose :deep(.callout-body) {
+  padding: 8px 12px;
+}
+
+.tl-prose :deep(.callout-body p:first-child) {
+  margin-top: 0;
+}
+.tl-prose :deep(.callout-body p:last-child) {
+  margin-bottom: 0;
+}
+
+/* ── info ── */
+.tl-prose :deep(.callout-info) {
+  background: color-mix(in srgb, var(--vp-c-brand-1) 6%, transparent);
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 20%, transparent);
+}
+.tl-prose :deep(.callout-info .callout-title) {
+  color: var(--vp-c-brand-1);
+  background: color-mix(in srgb, var(--vp-c-brand-1) 8%, transparent);
+}
+
+/* ── tip ── */
+.tl-prose :deep(.callout-tip) {
+  background: color-mix(in srgb, var(--vp-c-green-1) 6%, transparent);
+  border-color: color-mix(in srgb, var(--vp-c-green-1) 20%, transparent);
+}
+.tl-prose :deep(.callout-tip .callout-title) {
+  color: var(--vp-c-green-1);
+  background: color-mix(in srgb, var(--vp-c-green-1) 8%, transparent);
+}
+
+/* ── warning ── */
+.tl-prose :deep(.callout-warning) {
+  background: color-mix(in srgb, var(--vp-c-yellow-1) 6%, transparent);
+  border-color: color-mix(in srgb, var(--vp-c-yellow-1) 20%, transparent);
+}
+.tl-prose :deep(.callout-warning .callout-title) {
+  color: var(--vp-c-yellow-1);
+  background: color-mix(in srgb, var(--vp-c-yellow-1) 8%, transparent);
+}
+
+/* ── danger ── */
+.tl-prose :deep(.callout-danger) {
+  background: color-mix(in srgb, var(--vp-c-red-1) 6%, transparent);
+  border-color: color-mix(in srgb, var(--vp-c-red-1) 20%, transparent);
+}
+.tl-prose :deep(.callout-danger .callout-title) {
+  color: var(--vp-c-red-1);
+  background: color-mix(in srgb, var(--vp-c-red-1) 8%, transparent);
+}
 </style>

@@ -1,4 +1,6 @@
 import { defineConfig } from 'vitepress'
+import { transformObsidianCallouts } from './plugins/obsidianCompat'
+
 
 // 导入主题的配置
 import { blogTheme } from './blog-theme'
@@ -13,6 +15,15 @@ import { blogTheme } from './blog-theme'
 // Vitepress 默认配置
 // 详见文档：https://vitepress.dev/reference/site-config
 export default defineConfig({
+   markdown: {
+    config(md) {
+      // 在 markdown-it 解析前拦截源码
+      const originalParse = md.parse.bind(md)
+      md.parse = (src, env) => {
+        return originalParse(transformObsidianCallouts(src), env)
+      }
+    }
+  },
   // 继承博客主题(@sugarat/theme)
   extends: blogTheme,
   // base,
@@ -74,4 +85,5 @@ export default defineConfig({
       }
     ]             */
   }
+ 
 })

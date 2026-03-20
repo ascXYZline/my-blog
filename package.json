@@ -13,6 +13,7 @@
   "dependencies": {
     "@sugarat/theme": "^0.5.14",
     "markdown-it": "^14.1.1",
+    "markdown-it-container": "^4.0.0",
     "twikoo": "^1.7.1"
   },
   "directories": {
