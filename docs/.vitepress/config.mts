@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { transformObsidianCallouts } from './plugins/obsidianCompat'
-
+import { codeWrapPlugin } from './plugins/codeWrap'
 
 // 导入主题的配置
 import { blogTheme } from './blog-theme'
@@ -16,12 +16,27 @@ import { blogTheme } from './blog-theme'
 // 详见文档：https://vitepress.dev/reference/site-config
 export default defineConfig({
    markdown: {
+    codeTransformers: [
+    {
+      name: 'wrap',
+      pre(node) {
+        // meta.__raw 就是语言标识后面的字符串，如 "wrap"
+        if (this.options.meta?.__raw?.includes('wrap')) {
+          node.properties = node.properties || {}
+          node.properties['data-wrap'] = ''  // 添加 data 属性作为 CSS 钩子
+          }
+        }
+      }
+    ],
     config(md) {
       // 在 markdown-it 解析前拦截源码
+      
       const originalParse = md.parse.bind(md)
+      
       md.parse = (src, env) => {
         return originalParse(transformObsidianCallouts(src), env)
       }
+      
     }
   },
   // 继承博客主题(@sugarat/theme)

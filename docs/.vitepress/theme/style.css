@@ -5,10 +5,26 @@
 }
 
 .VPHome {
-  /* 定义遮罩样式，控制图片展示的程度 */
   background: radial-gradient(
     ellipse,
     rgba(var(--bg-gradient-home), 1) 0%,
     rgba(var(--bg-gradient-home), 0) 150%
   );
+}
+
+/* ===================== 代码块自动换行模式 ===================== */
+
+pre[data-wrap],
+pre[data-wrap] code,
+pre[data-wrap] code .line {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+
+/* 换行后的缩进提示（可选，删掉这段也行） */
+pre[data-wrap] code .line {
+  text-indent: -0.5em;
+  padding-left: 0.5em;
 }
