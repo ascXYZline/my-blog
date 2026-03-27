@@ -7,8 +7,12 @@ sidebar: false
 aside: true
 outline: deep
 ---
+
+
 # C++
 ##  OOP
+
+前排提示：只涉及最传统的cpp特性，对于STL等更是只字不提(╥_╥)     
 ### index 
 
 [[1,18]内联函数 (inline function)](#anchor1)   
