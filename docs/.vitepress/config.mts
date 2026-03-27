@@ -60,8 +60,8 @@ export default defineConfig({
   themeConfig: {
     // 展示 2,3 级标题在目录中
     outline: {
-      level: [ 2, 3],
-      label: '  Outline'
+      level: [2, 3],
+      label: 'Outline'
     },
     
     lastUpdated: {
