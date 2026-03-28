@@ -280,7 +280,9 @@ void render(Shape *p){
 - 当类定义中含`virtual`时，对象的首地址为vptr
 - vptr为指针类型，指向vtable 
 - vtable存放所有虚函数的入口地址
-![](./C++OOP/1.24.png)
+
+![](../public/C++/1.png)
+
 - 现有
 ```c++
 class A{};
