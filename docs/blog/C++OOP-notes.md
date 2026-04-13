@@ -180,10 +180,11 @@ char& r=c;
 ```
 - r称为c的别名
 
-- ```c++
+```c++
 const int &z=x;
 //不能通过z修改x
-  ```
+```        
+
 - 与指针不同，引用一经绑定，不可再修改此绑定关系
 - ```c++
   int &*p; //illegal! No pointers to reference
@@ -496,10 +497,9 @@ We use templates to write **generic code** that is manageable, type-safe, and fl
 >int m_size;
 >
 >}
->```
 >
->```
->//all functions inside the class template are function templates
+>
+>  //all functions inside the class template are function templates
 >
 >template
 >Vector<T>::Vector(int size):m_size(size){
